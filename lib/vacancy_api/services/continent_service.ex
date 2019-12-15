@@ -53,9 +53,16 @@ defmodule VacancyApi.ContinentService do
   Gets Latitude and Longitude and return continent which this coordinates belongs.
   Returns {:ok, "Europe"} or {:error, :invalid_params}
   """
-  def which_continent(latitude, longitude, region_polygons)
+  def which_continent(longitude, latitude, regions_polygons)
       when latitude <= 90 and latitude >= -90 and longitude <= 180 and longitude >= -180 do
-    {:ok, "Europe"}
+    regions_polygons
+    |> Enum.find(fn {region, polygons} ->
+
+    end)
+    |> case do
+         {region, _polygons} -> region
+         nil -> {:error, :unexpected_error}
+       end
   end
   def which_continent(_, _, _), do: {:error, :invalid_params}
 
