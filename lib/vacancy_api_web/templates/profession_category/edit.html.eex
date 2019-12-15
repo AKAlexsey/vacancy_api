@@ -1,0 +1,5 @@
+<h1>Edit Profession category</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.profession_category_path(@conn, :update, @profession_category)) %>
+
+<span><%= link "Back", to: Routes.profession_category_path(@conn, :index) %></span>

@@ -1,0 +1,28 @@
+<h1>Show Job</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @job.name %>
+  </li>
+
+  <li>
+    <strong>Contract type:</strong>
+    <%= @job.contract_type %>
+  </li>
+
+  <li>
+    <strong>Office latitude:</strong>
+    <%= @job.office_latitude %>
+  </li>
+
+  <li>
+    <strong>Office longitude:</strong>
+    <%= @job.office_longitude %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.job_path(@conn, :edit, @job) %></span>
+<span><%= link "Back", to: Routes.job_path(@conn, :index) %></span>

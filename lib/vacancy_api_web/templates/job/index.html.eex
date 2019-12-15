@@ -1,0 +1,32 @@
+<h1>Listing Jobs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Contract type</th>
+      <th>Office latitude</th>
+      <th>Office longitude</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for job <- @jobs do %>
+    <tr>
+      <td><%= job.name %></td>
+      <td><%= job.contract_type %></td>
+      <td><%= job.office_latitude %></td>
+      <td><%= job.office_longitude %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.job_path(@conn, :show, job) %></span>
+        <span><%= link "Edit", to: Routes.job_path(@conn, :edit, job) %></span>
+        <span><%= link "Delete", to: Routes.job_path(@conn, :delete, job), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Job", to: Routes.job_path(@conn, :new) %></span>

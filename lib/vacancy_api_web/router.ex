@@ -17,6 +17,10 @@ defmodule VacancyApiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    resources "/jobs", JobController
+    resources "/professions", ProfessionController
+    resources "/profession_categories", ProfessionCategoryController
   end
 
   # Other scopes may use custom stacks.
