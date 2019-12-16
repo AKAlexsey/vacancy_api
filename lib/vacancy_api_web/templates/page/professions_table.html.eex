@@ -1,0 +1,20 @@
+<section class="phx-hero">
+    <h1>Statistic by professions and table fields</h1>
+
+</section>
+<table>
+    <tr>
+        <th></th>
+        <%= for header <- @professions_table.headers do %>
+          <th><%= header %></th>
+        <% end %>
+    </tr>
+    <%= for %{name: name, columns: columns} <- @professions_table.rows do %>
+        <tr>
+            <td><%= name %></td>
+            <%= for jobs_count <- columns do %>
+                <th><%= jobs_count %></th>
+            <% end %>
+        </tr>
+    <% end %>
+</table>

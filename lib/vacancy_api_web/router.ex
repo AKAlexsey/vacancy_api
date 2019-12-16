@@ -17,6 +17,7 @@ defmodule VacancyApiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/professions_table", PageController, :professions_table
 
     resources "/jobs", JobController
     resources "/professions", ProfessionController
