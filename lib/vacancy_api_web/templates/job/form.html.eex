@@ -10,7 +10,7 @@
   <%= error_tag f, :name %>
 
   <%= label f, :contract_type %>
-  <%= number_input f, :contract_type %>
+  <%= select f, :contract_type, ContractTypeEnum.__enum_map__() %>
   <%= error_tag f, :contract_type %>
 
   <%= label f, :office_latitude %>

@@ -7,6 +7,5 @@ defmodule VacancyApi.Repo.Migrations.CreateProfessionCategories do
 
       timestamps()
     end
-
   end
 end
