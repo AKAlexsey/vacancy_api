@@ -4,63 +4,63 @@ defmodule VacancyApi.ContinentService do
   """
 
   @north_america_name :"North america"
-  @latitude_north_america_1 [90, 90, 78.13, 57.5, 15, 15, 1.25, 1.25, 51, 60, 60]
-  @longitude_north_america_1 [-168.75, -10, -10, -37.5, -30, -75, -82.5, -105, -180, -180, -168.75]
-  @latitude_north_america_2 [51, 51, 60]
-  @longitude_north_america_2 [166.6, 180, 180]
+  @north_america_points_1 [
+    {90, -168.75}, {90, -10}, {78.13, -10}, {57.5, -37.5}, {15, -30},
+    {15, -75}, {1.25, -82.5}, {1.25, -105}, {51, -180}, {60, -180}, {60, -168.75}
+  ]
+  @north_america_points_2 [{51, 166.6}, {51, 180}, {60, 180}]
 
   @south_america_name :"South america"
-  @latitude_south_america [1.25, 1.25, 15, 15, -60, -60]
-  @longitude_south_america [-105, -82.5, -75, -30, -30, -105]
+  @south_america_points [{1.25, -105}, {1.25, -82.5}, {15, -75}, {15, -30}, {-60, -30}, {-60, -105}]
 
   @europe_name :"Europe"
-  @latitude_europe [
-    90, 90, 42.5, 42.5, 40.79, 41, 40.55, 40.40, 40.05,
-    39.17, 35.46, 33, 38, 35.42, 28.25, 15, 57.5, 78.13
-  ]
-  @longitude_europe [
-    -10, 77.5, 48.8, 30, 28.81, 29, 27.31, 26.75, 26.36,
-    25.19, 27.91, 27.5, 10, -10, -13, -30, -37.5, -10
+  @europe_points [
+    {90, -10}, {90, 77.5}, {42.5, 48.8}, {42.5, 30}, {40.79, 28.81},
+    {41, 29}, {40.55, 27.31}, {40.4, 26.75}, {40.05, 26.36}, {39.17, 25.19},
+    {35.46, 27.91}, {33, 27.5}, {38, 10}, {35.42, -10}, {28.25, -13},
+    {15, -30}, {57.5, -37.5}, {78.13, -10}
   ]
 
   @africa_name :"Africa"
-  @latitude_africa [15, 28.25, 35.42, 38, 33, 31.74, 29.54, 27.78, 11.3, 12.5, -60, -60]
-  @longitude_africa [-30, -13, -10, 10, 27.5, 34.58, 34.92, 34.46, 44.3, 52, 75, -30]
+  @africa_points [
+    {15, -30}, {28.25, -13}, {35.42, -10}, {38, 10},
+    {33, 27.5}, {31.74, 34.58}, {29.54, 34.92},
+    {27.78, 34.46}, {11.3, 44.3}, {12.5, 52},
+    {-60, 75}, {-60, -30}
+  ]
 
   @australia_name :"Australia"
-  @latitude_australia [-11.88, -10.27, -10, -30, -52.5, -31.88]
-  @longitude_australia [110, 140, 145, 161.25, 142.5, 110]
+  @australia_points [{-11.88, 110}, {-10.27, 140}, {-10, 145}, {-30, 161.25}, {-52.5, 142.5}, {-31.88, 110}]
 
   @asia_name :"Asia"
-  @latitude_asia_1 [
-    90, 42.5, 42.5, 40.79, 41, 40.55, 40.4, 40.05, 39.17,
-    35.46, 33, 31.74, 29.54, 27.78, 11.3, 12.5, -60, -60,
-    -31.88, -11.88, -10.27, 33.13, 51, 60, 90
+  @asia_points_1 [
+    {90, 77.5}, {42.5, 48.8}, {42.5, 30}, {40.79, 28.81},
+    {41, 29}, {40.55, 27.31}, {40.4, 26.75}, {40.05, 26.36},
+    {39.17, 25.19}, {35.46, 27.91}, {33, 27.5}, {31.74, 34.58},
+    {29.54, 34.92}, {27.78, 34.46}, {11.3, 44.3}, {12.5, 52},
+    {-60, 75}, {-60, 110}, {-31.88, 110}, {-11.88, 110},
+    {-10.27, 140}, {33.13, 140}, {51, 166.6}, {60, 180}, {90, 180}
   ]
-  @longitude_asia_1 [
-    77.5, 48.8, 30, 28.81, 29, 27.31, 26.75, 26.36, 25.19,
-    27.91, 27.5, 34.58, 34.92, 34.46, 44.3, 52, 75, 110,
-    110, 110, 140, 140, 166.6, 180, 180
-  ]
-  @latitude_asia_2 [90, 90, 60, 60]
-  @longitude_asia_2 [-180, -168.75, -168.75, -180]
+  @asia_points_2 [{90, -180}, {90, -168.75}, {60, -168.75}, {60, -180}]
 
   @antarctic_name :"Antarctic"
-  @latitude_antarctic [-60, -60, -90, -90]
-  @longitude_antarctic [-180, 180, 180, -180]
+  @antarctic_points [{-60, -180}, {-60, 180}, {-90, 180}, {-90, -180}]
 
   @doc """
   Gets Latitude and Longitude and return continent which this coordinates belongs.
   Returns {:ok, "Europe"} or {:error, :invalid_params}
   """
-  def which_continent(longitude, latitude, regions_polygons)
+  def which_continent(latitude, longitude, regions_polygons)
       when latitude <= 90 and latitude >= -90 and longitude <= 180 and longitude >= -180 do
+    map_point = %Geo.Point{coordinates: {latitude, longitude}}
     regions_polygons
-    |> Enum.find(fn {region, polygons} ->
-
-    end)
+    |> Enum.find(
+         fn {region, polygons} ->
+           Enum.any?(polygons, & Topo.intersects?(&1, map_point))
+         end
+       )
     |> case do
-         {region, _polygons} -> region
+         {region, _polygons} -> {:ok, region}
          nil -> {:error, :unexpected_error}
        end
   end
@@ -75,7 +75,7 @@ defmodule VacancyApi.ContinentService do
     ,{
       :"Asia",
       [
-        %Geo.Polygon{coordinates: [{90, -10}, {90, 77.5}, {42.5, 48.8}...]}
+        %Geo.Polygon{coordinates: [[{90, -10}, {90, 77.5}, {42.5, 48.8}...]]}
       ]
     }
     ...
@@ -84,6 +84,19 @@ defmodule VacancyApi.ContinentService do
   """
   @spec get_polygons :: Keyword.t
   def get_polygons do
-    []
+    [
+      make_region_polygons(@north_america_name, [@north_america_points_1, @north_america_points_2]),
+      make_region_polygons(@south_america_name, [@south_america_points]),
+      make_region_polygons(@europe_name, [@europe_points]),
+      make_region_polygons(@africa_name, [@africa_points]),
+      make_region_polygons(@australia_name, [@australia_points]),
+      make_region_polygons(@asia_name, [@asia_points_1, @asia_points_2]),
+      make_region_polygons(@antarctic_name, [@antarctic_points]),
+    ]
+  end
+  defp make_region_polygons(region, coordinates) do
+    coordinates
+    |> Enum.map(&(%Geo.Polygon{coordinates: [&1]}))
+    |> (fn polygons -> {region, polygons} end).()
   end
 end
