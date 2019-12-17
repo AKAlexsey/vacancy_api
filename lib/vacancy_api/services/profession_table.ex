@@ -3,8 +3,6 @@ defmodule VacancyApi.ProfessionTable do
   Make two dimensional array for displaying jobs by regions.
   """
 
-  # TODO add tests
-
   defstruct rows: [], headers: []
 
   @type t :: %__MODULE__{}
