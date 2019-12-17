@@ -47,7 +47,8 @@ defmodule VacancyApi.MixProject do
       # Tools
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:csv, "~> 2.3"}
+      {:csv, "~> 2.3"},
+      {:topo, "~> 0.4.0"}
     ]
   end
 

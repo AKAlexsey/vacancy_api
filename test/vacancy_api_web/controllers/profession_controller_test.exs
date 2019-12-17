@@ -5,10 +5,10 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
 
   @create_attrs %{name: "some name"}
   @update_attrs %{name: "some updated name"}
-  @invalid_attrs %{name: nil}
+  @invalid_attrs %{name: nil, category_id: nil}
 
-  def fixture(:profession) do
-    {:ok, profession} = Jobs.create_profession(@create_attrs)
+  def fixture(:profession, attrs) do
+    {:ok, profession} = Jobs.create_profession(Map.merge(@create_attrs, attrs))
     profession
   end
 
@@ -27,8 +27,15 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "create profession" do
-    test "redirects to show when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.profession_path(conn, :create), profession: @create_attrs)
+    setup [:create_category]
+
+    test "redirects to show when data is valid", %{conn: conn, category_id: category_id} do
+      conn =
+        post(
+          conn,
+          Routes.profession_path(conn, :create),
+          profession: Map.put(@create_attrs, :category_id, category_id)
+        )
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.profession_path(conn, :show, id)
@@ -44,7 +51,7 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "edit profession" do
-    setup [:create_profession]
+    setup [:create_category, :create_profession]
 
     test "renders form for editing chosen profession", %{conn: conn, profession: profession} do
       conn = get(conn, Routes.profession_path(conn, :edit, profession))
@@ -53,10 +60,12 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "update profession" do
-    setup [:create_profession]
+    setup [:create_category, :create_profession]
 
     test "redirects when data is valid", %{conn: conn, profession: profession} do
-      conn = put(conn, Routes.profession_path(conn, :update, profession), profession: @update_attrs)
+      conn =
+        put(conn, Routes.profession_path(conn, :update, profession), profession: @update_attrs)
+
       assert redirected_to(conn) == Routes.profession_path(conn, :show, profession)
 
       conn = get(conn, Routes.profession_path(conn, :show, profession))
@@ -64,25 +73,33 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, profession: profession} do
-      conn = put(conn, Routes.profession_path(conn, :update, profession), profession: @invalid_attrs)
+      conn =
+        put(conn, Routes.profession_path(conn, :update, profession), profession: @invalid_attrs)
+
       assert html_response(conn, 200) =~ "Edit Profession"
     end
   end
 
   describe "delete profession" do
-    setup [:create_profession]
+    setup [:create_category, :create_profession]
 
     test "deletes chosen profession", %{conn: conn, profession: profession} do
       conn = delete(conn, Routes.profession_path(conn, :delete, profession))
       assert redirected_to(conn) == Routes.profession_path(conn, :index)
+
       assert_error_sent 404, fn ->
         get(conn, Routes.profession_path(conn, :show, profession))
       end
     end
   end
 
-  defp create_profession(_) do
-    profession = fixture(:profession)
+  def create_category(_) do
+    {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
+    {:ok, category_id: category_id}
+  end
+
+  defp create_profession(%{category_id: category_id}) do
+    profession = fixture(:profession, %{category_id: category_id})
     {:ok, profession: profession}
   end
 end

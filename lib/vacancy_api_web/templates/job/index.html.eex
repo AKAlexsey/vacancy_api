@@ -7,6 +7,7 @@
       <th>Contract type</th>
       <th>Office latitude</th>
       <th>Office longitude</th>
+      <th>Region</th>
 
       <th></th>
     </tr>
@@ -18,6 +19,7 @@
       <td><%= job.contract_type %></td>
       <td><%= job.office_latitude %></td>
       <td><%= job.office_longitude %></td>
+      <td><%= job.region %></td>
 
       <td>
         <span><%= link "Show", to: Routes.job_path(@conn, :show, job) %></span>
