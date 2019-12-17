@@ -3,7 +3,7 @@
 ## Getting started
 
 * Install dependencies with `mix deps.get`
-* Create and migrate your database with `mix ecto.setup`
+* Create, migrate and seed database with `mix ecto.setup` (in case you need start from the beginning `mix ecto.reset`)
 * Set regions to all jobs `mix set_regions`
 * Install Node.js dependencies with `cd assets && npm install`
 * Start Phoenix endpoint with `mix phx.server`
@@ -50,6 +50,8 @@ To request jobs you can request `/api/job_search`. It return result as JSON thos
 ```
 
 Names of fields speaks for themselves.
+
+**Example request** `http://localhost:4000/api/job_search?lat=48.8661039&lon=2.305791&radius=0.4`
 
 ### Accepted parameters
 
