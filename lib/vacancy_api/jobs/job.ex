@@ -19,6 +19,7 @@ defmodule VacancyApi.Jobs.Job do
     field :office_latitude, :float
     field :office_longitude, :float
     field :region, RegionEnum
+    field :search_point_distance, :float, virtual: true
 
     belongs_to :profession, Profession
 

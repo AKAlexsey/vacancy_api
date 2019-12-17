@@ -24,8 +24,9 @@ defmodule VacancyApiWeb.Router do
     resources "/profession_categories", ProfessionCategoryController
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", VacancyApiWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", VacancyApiWeb do
+    pipe_through :api
+
+    get "/job_search", JobSearchController, :index
+  end
 end

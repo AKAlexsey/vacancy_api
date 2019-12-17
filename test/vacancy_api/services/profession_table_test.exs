@@ -1,7 +1,7 @@
-defmodule  VacancyApi.ProfessionTableTest do
+defmodule VacancyApi.ProfessionTableTest do
   use VacancyApi.DataCase
 
-  alias VacancyApi.Jobs.{Job, Profession, ProfessionCategory}
+  alias VacancyApi.Jobs
   alias VacancyApi.ProfessionTable
 
   describe "#perform" do
@@ -10,9 +10,15 @@ defmodule  VacancyApi.ProfessionTableTest do
       profession_name1 = "Designer"
       profession_name2 = "Developer"
       profession_name3 = "Manager"
-      %{id: profession1_id} = create_profession_fixture(%{name: profession_name1, category_id: category_id})
-      %{id: profession2_id} = create_profession_fixture(%{name: profession_name2, category_id: category_id})
-      %{id: profession3_id} = create_profession_fixture(%{name: profession_name3, category_id: category_id})
+
+      %{id: profession1_id} =
+        create_profession_fixture(%{name: profession_name1, category_id: category_id})
+
+      %{id: profession2_id} =
+        create_profession_fixture(%{name: profession_name2, category_id: category_id})
+
+      %{id: profession3_id} =
+        create_profession_fixture(%{name: profession_name3, category_id: category_id})
 
       create_n_jobs(1, profession1_id, :north_america)
       create_n_jobs(2, profession1_id, :europe)
@@ -45,6 +51,7 @@ defmodule  VacancyApi.ProfessionTableTest do
           %{columns: [38, 8, 0, 9, 0, 10, 11, 0, 0], name: "Manager"}
         ]
       }
+
       {:ok, result_standard: result_standard}
     end
 
@@ -54,40 +61,34 @@ defmodule  VacancyApi.ProfessionTableTest do
   end
 
   def create_profession_category_fixture(attrs) do
-    %ProfessionCategory{}
-    |> ProfessionCategory.changeset(attrs)
-    |> Repo.insert!()
+    {:ok, profession_category} = Jobs.create_profession_category(attrs)
+    profession_category
   end
 
   def create_profession_fixture(attrs) do
-    %Profession{}
-    |> Profession.changeset(attrs)
-    |> Repo.insert!()
+    {:ok, profession} = Jobs.create_profession(attrs)
+    profession
   end
 
   def create_n_jobs(number, profession_id, region) do
-    (1..number)
-    |> Enum.each(
-         fn n ->
-           lat = :rand.uniform() * 180 - 90
-           lon = :rand.uniform() * 360 - 180
-           create_job_fixture(
-             %{
-               name: "Job name #{n}",
-               office_latitude: lat,
-               office_longitude: lon,
-               profession_id: profession_id,
-               region: region,
-               contract_type: :internship
-             }
-           )
-         end
-       )
+    1..number
+    |> Enum.each(fn n ->
+      lat = :rand.uniform() * 180 - 90
+      lon = :rand.uniform() * 360 - 180
+
+      create_job_fixture(%{
+        name: "Job name #{n}",
+        office_latitude: lat,
+        office_longitude: lon,
+        profession_id: profession_id,
+        region: region,
+        contract_type: :internship
+      })
+    end)
   end
 
   def create_job_fixture(attrs) do
-    %Job{}
-    |> Job.changeset(attrs)
-    |> Repo.insert!()
+    {:ok, job} = Jobs.create_job(attrs)
+    job
   end
 end
