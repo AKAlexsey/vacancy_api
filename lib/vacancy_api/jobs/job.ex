@@ -33,9 +33,9 @@ defmodule VacancyApi.Jobs.Job do
     |> validate_required(@required_fields)
     |> validate_number(:office_latitude, less_than_or_equal_to: 90, greater_than_or_equal_to: -90)
     |> validate_number(:office_longitude,
-         less_than_or_equal_to: 180,
-         greater_than_or_equal_to: -180
-       )
+      less_than_or_equal_to: 180,
+      greater_than_or_equal_to: -180
+    )
   end
 
   defp prepare_attrs(attrs) do
@@ -48,10 +48,16 @@ defmodule VacancyApi.Jobs.Job do
   defp string_param_to_integer(attrs, key) do
     case attrs[key] do
       value when is_binary(value) ->
-        updated_value = if(String.match?(value, ~r/^\d+$/), do: String.to_integer(value), else: value)
+        updated_value =
+          if(String.match?(value, ~r/^\d+$/), do: String.to_integer(value), else: value)
+
         Map.put(attrs, key, updated_value)
-      value when is_integer(value) -> Map.put(attrs, key, value)
-      _ -> attrs
+
+      value when is_integer(value) ->
+        Map.put(attrs, key, value)
+
+      _ ->
+        attrs
     end
   end
 

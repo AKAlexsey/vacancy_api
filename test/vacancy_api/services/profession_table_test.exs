@@ -6,19 +6,13 @@ defmodule VacancyApi.ProfessionTableTest do
 
   describe "#perform" do
     setup do
-      %{id: category_id} = create_profession_category_fixture(%{name: "IT"})
-      profession_name1 = "Designer"
-      profession_name2 = "Developer"
-      profession_name3 = "Manager"
-
-      %{id: profession1_id} =
-        create_profession_fixture(%{name: profession_name1, category_id: category_id})
+      %{id: profession1_id} = create_profession_fixture(%{name: "Developer", category_name: "IT"})
 
       %{id: profession2_id} =
-        create_profession_fixture(%{name: profession_name2, category_id: category_id})
+        create_profession_fixture(%{name: "Concierge", category_name: "Tourism"})
 
       %{id: profession3_id} =
-        create_profession_fixture(%{name: profession_name3, category_id: category_id})
+        create_profession_fixture(%{name: "Carpenter", category_name: "Industrial"})
 
       create_n_jobs(1, profession1_id, :north_america)
       create_n_jobs(2, profession1_id, :europe)
@@ -45,10 +39,10 @@ defmodule VacancyApi.ProfessionTableTest do
           :pacific_ocean
         ],
         rows: [
-          %{columns: [66, 13, 0, 16, 0, 17, 20, 0, 0], name: :total},
-          %{columns: [6, 1, 0, 2, 0, 0, 3, 0, 0], name: "Designer"},
-          %{name: "Developer", columns: [22, 4, 0, 5, 0, 7, 6, 0, 0]},
-          %{columns: [38, 8, 0, 9, 0, 10, 11, 0, 0], name: "Manager"}
+          %{name: :total, columns: [66, 13, 0, 16, 0, 17, 20, 0, 0]},
+          %{name: "IT", columns: [6, 1, 0, 2, 0, 0, 3, 0, 0]},
+          %{name: "Industrial", columns: [38, 8, 0, 9, 0, 10, 11, 0, 0]},
+          %{name: "Tourism", columns: [22, 4, 0, 5, 0, 7, 6, 0, 0]}
         ]
       }
 
@@ -58,11 +52,6 @@ defmodule VacancyApi.ProfessionTableTest do
     test "Return right statistics", %{result_standard: result_standard} do
       assert result_standard == ProfessionTable.perform()
     end
-  end
-
-  def create_profession_category_fixture(attrs) do
-    {:ok, profession_category} = Jobs.create_profession_category(attrs)
-    profession_category
   end
 
   def create_profession_fixture(attrs) do

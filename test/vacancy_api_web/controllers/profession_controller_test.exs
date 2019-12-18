@@ -3,9 +3,9 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
 
   alias VacancyApi.Jobs
 
-  @create_attrs %{name: "some name"}
-  @update_attrs %{name: "some updated name"}
-  @invalid_attrs %{name: nil, category_id: nil}
+  @create_attrs %{name: "some name", category_name: "Backend"}
+  @update_attrs %{name: "some updated name", category_name: "Frontend"}
+  @invalid_attrs %{name: nil, category_name: nil}
 
   def fixture(:profession, attrs) do
     {:ok, profession} = Jobs.create_profession(Map.merge(@create_attrs, attrs))
@@ -27,14 +27,12 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "create profession" do
-    setup [:create_category]
-
-    test "redirects to show when data is valid", %{conn: conn, category_id: category_id} do
+    test "redirects to show when data is valid", %{conn: conn} do
       conn =
         post(
           conn,
           Routes.profession_path(conn, :create),
-          profession: Map.put(@create_attrs, :category_id, category_id)
+          profession: @create_attrs
         )
 
       assert %{id: id} = redirected_params(conn)
@@ -51,7 +49,7 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "edit profession" do
-    setup [:create_category, :create_profession]
+    setup [:create_profession]
 
     test "renders form for editing chosen profession", %{conn: conn, profession: profession} do
       conn = get(conn, Routes.profession_path(conn, :edit, profession))
@@ -60,7 +58,7 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "update profession" do
-    setup [:create_category, :create_profession]
+    setup [:create_profession]
 
     test "redirects when data is valid", %{conn: conn, profession: profession} do
       conn =
@@ -81,7 +79,7 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
   end
 
   describe "delete profession" do
-    setup [:create_category, :create_profession]
+    setup [:create_profession]
 
     test "deletes chosen profession", %{conn: conn, profession: profession} do
       conn = delete(conn, Routes.profession_path(conn, :delete, profession))
@@ -93,13 +91,8 @@ defmodule VacancyApiWeb.ProfessionControllerTest do
     end
   end
 
-  def create_category(_) do
-    {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-    {:ok, category_id: category_id}
-  end
-
-  defp create_profession(%{category_id: category_id}) do
-    profession = fixture(:profession, %{category_id: category_id})
+  defp create_profession(_) do
+    profession = fixture(:profession, %{})
     {:ok, profession: profession}
   end
 end

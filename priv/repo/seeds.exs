@@ -17,39 +17,18 @@ seed_data_path = "./priv/repo/seed_data"
 professions_path = "#{seed_data_path}/technical-test-professions.csv"
 jobs_path = "#{seed_data_path}/technical-test-jobs.csv"
 
-professions_data_stream =
-  professions_path
-  |> File.stream!()
-  |> CSV.decode()
-
-category_names =
-  professions_data_stream
-  |> Enum.map(fn {:ok, [_, _, category_name]} -> category_name end)
-  |> Enum.uniq()
-
-category_name_ids =
-  category_names
-  |> Enum.reduce(
-    %{},
-    fn name, acc ->
-      {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: name})
-      Map.put(acc, name, category_id)
-    end
-  )
-
-professions_data_stream =
-  professions_data_stream
-  |> Enum.each(fn {:ok, [profession_id, profession_name, category_name]} ->
-    category_id = category_name_ids[category_name]
-
-    %Profession{}
-    |> Profession.seed_changeset(%{
-      id: profession_id,
-      name: profession_name,
-      category_id: category_id
-    })
-    |> Repo.insert()
-  end)
+professions_path
+|> File.stream!()
+|> CSV.decode()
+|> Enum.each(fn {:ok, [profession_id, profession_name, category_name]} ->
+  %Profession{}
+  |> Profession.seed_changeset(%{
+    id: profession_id,
+    name: profession_name,
+    category_name: category_name
+  })
+  |> Repo.insert()
+end)
 
 jobs_path
 |> File.stream!()

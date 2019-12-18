@@ -21,9 +21,6 @@
             <li>
               <%= link "Professions", to: Routes.profession_path(@conn, :index) %>
             </li>
-            <li>
-              <%= link "Profession categories", to: Routes.profession_category_path(@conn, :index) %>
-            </li>
           </ul>
         </nav>
         <a href="http://phoenixframework.org/" class="phx-logo">

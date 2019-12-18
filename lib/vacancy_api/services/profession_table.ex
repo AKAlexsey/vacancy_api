@@ -11,7 +11,7 @@ defmodule VacancyApi.ProfessionTable do
   @regions Keyword.keys(RegionEnum.__enum_map__())
   @table_headers [@total_name] ++ @regions
 
-  alias VacancyApi.Jobs.Profession
+  alias VacancyApi.Jobs.Job
   alias VacancyApi.Repo
   import Ecto.Query
 
@@ -28,16 +28,20 @@ defmodule VacancyApi.ProfessionTable do
 
   defp fetch_data_from_database do
     from(
-      p in Profession,
-      join: j in assoc(p, :jobs),
-      group_by: [j.region, p.id],
-      select: %{profession_name: p.name, jobs_count: count(j), region: j.region}
+      j in Job,
+      join: p in assoc(j, :profession),
+      distinct: j.id,
+      select: %{
+        id: j.id,
+        region: j.region,
+        category_name: p.category_name
+      }
     )
     |> Repo.all()
   end
 
   defp make_rows(jobs_collection) do
-    [make_total_row(jobs_collection)] ++ make_profession_rows(jobs_collection)
+    [make_total_row(jobs_collection)] ++ make_profession_category_rows(jobs_collection)
   end
 
   defp make_row(name, columns) do
@@ -48,47 +52,40 @@ defmodule VacancyApi.ProfessionTable do
   end
 
   defp make_total_row(jobs_collection) do
-    jobs_by_region =
-      jobs_collection
-      |> Enum.group_by(fn %{region: region} -> region end)
+    jobs_in_region = Enum.group_by(jobs_collection, fn %{region: region} -> region end)
 
-    columns =
-      @regions
-      |> Enum.map(fn region ->
-        jobs_by_region
-        |> Map.get(region)
-        |> case do
-          nil ->
-            0
-
-          jobs_list ->
-            Enum.reduce(jobs_list, 0, &(&1.jobs_count + &2))
-        end
-      end)
+    columns = Enum.map(@regions, &count_total_jobs_in_region(&1, jobs_in_region))
 
     make_row(@total_name, [Enum.sum(columns)] ++ columns)
   end
 
-  defp make_profession_rows(jobs_collection) do
+  defp count_total_jobs_in_region(region, jobs_in_region) do
+    jobs_in_region
+    |> Map.get(region)
+    |> case do
+      nil -> 0
+      jobs_list -> length(jobs_list)
+    end
+  end
+
+  defp make_profession_category_rows(jobs_collection) do
     jobs_collection
-    |> Enum.group_by(fn %{profession_name: name} -> name end)
-    |> Enum.map(fn {profession_name, jobs_list} ->
-      columns =
-        @regions
-        |> Enum.map(fn region ->
-          jobs_list
-          |> Enum.find(fn %{region: jobs_region} -> jobs_region == region end)
-          |> case do
-            nil ->
-              0
+    |> Enum.group_by(fn %{category_name: category_name} -> category_name end)
+    |> Enum.map(fn {category_name, jobs_by_category} ->
+      columns = Enum.map(@regions, &count_jobs_by_category_name_in_region(&1, jobs_by_category))
 
-            %{jobs_count: jobs_count} ->
-              jobs_count
-          end
-        end)
-
-      make_row(profession_name, [Enum.sum(columns)] ++ columns)
+      make_row(category_name, [Enum.sum(columns)] ++ columns)
     end)
+  end
+
+  defp count_jobs_by_category_name_in_region(region, jobs_by_category) do
+    jobs_by_category
+    |> Enum.reduce(
+      0,
+      fn %{region: job_region}, acc ->
+        if(job_region == region, do: acc + 1, else: acc)
+      end
+    )
   end
 
   defp return_result(rows) do

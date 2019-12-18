@@ -3,89 +3,17 @@ defmodule VacancyApi.JobsTest do
 
   alias VacancyApi.Jobs
 
-  describe "profession_categories" do
-    alias VacancyApi.Jobs.ProfessionCategory
-
-    @valid_attrs %{name: "some name"}
-    @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil}
-
-    def profession_category_fixture(attrs \\ %{}) do
-      {:ok, profession_category} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Jobs.create_profession_category()
-
-      profession_category
-    end
-
-    test "list_profession_categories/0 returns all profession_categories" do
-      profession_category = profession_category_fixture()
-      assert Jobs.list_profession_categories() == [profession_category]
-    end
-
-    test "get_profession_category!/1 returns the profession_category with given id" do
-      profession_category = profession_category_fixture()
-      assert Jobs.get_profession_category!(profession_category.id) == profession_category
-    end
-
-    test "create_profession_category/1 with valid data creates a profession_category" do
-      assert {:ok, %ProfessionCategory{} = profession_category} =
-               Jobs.create_profession_category(@valid_attrs)
-
-      assert profession_category.name == "some name"
-    end
-
-    test "create_profession_category/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Jobs.create_profession_category(@invalid_attrs)
-    end
-
-    test "update_profession_category/2 with valid data updates the profession_category" do
-      profession_category = profession_category_fixture()
-
-      assert {:ok, %ProfessionCategory{} = profession_category} =
-               Jobs.update_profession_category(profession_category, @update_attrs)
-
-      assert profession_category.name == "some updated name"
-    end
-
-    test "update_profession_category/2 with invalid data returns error changeset" do
-      profession_category = profession_category_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Jobs.update_profession_category(profession_category, @invalid_attrs)
-
-      assert profession_category == Jobs.get_profession_category!(profession_category.id)
-    end
-
-    test "delete_profession_category/1 deletes the profession_category" do
-      profession_category = profession_category_fixture()
-      assert {:ok, %ProfessionCategory{}} = Jobs.delete_profession_category(profession_category)
-
-      assert_raise Ecto.NoResultsError, fn ->
-        Jobs.get_profession_category!(profession_category.id)
-      end
-    end
-
-    test "change_profession_category/1 returns a profession_category changeset" do
-      profession_category = profession_category_fixture()
-      assert %Ecto.Changeset{} = Jobs.change_profession_category(profession_category)
-    end
-  end
-
   describe "professions" do
     alias VacancyApi.Jobs.Profession
 
-    @valid_attrs %{name: "some name"}
-    @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil, category_id: nil}
+    @valid_attrs %{name: "some name", category_name: "Backend"}
+    @update_attrs %{name: "some updated name", category_name: "Mangement"}
+    @invalid_attrs %{name: nil, category_name: nil}
 
     def profession_fixture(attrs \\ %{}) do
-      {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-
       {:ok, profession} =
         attrs
-        |> Enum.into(Map.put(@valid_attrs, :category_id, category_id))
+        |> Enum.into(@valid_attrs)
         |> Jobs.create_profession()
 
       profession
@@ -102,10 +30,7 @@ defmodule VacancyApi.JobsTest do
     end
 
     test "create_profession/1 with valid data creates a profession" do
-      {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-
-      assert {:ok, %Profession{} = profession} =
-               Jobs.create_profession(Map.put(@valid_attrs, :category_id, category_id))
+      assert {:ok, %Profession{} = profession} = Jobs.create_profession(@valid_attrs)
 
       assert profession.name == "some name"
     end
@@ -158,10 +83,8 @@ defmodule VacancyApi.JobsTest do
     @invalid_attrs %{contract_type: nil, name: nil, office_latitude: nil, office_longitude: nil}
 
     def job_fixture(attrs \\ %{}) do
-      {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-
       {:ok, %{id: profession_id}} =
-        Jobs.create_profession(%{name: "Backend", category_id: category_id})
+        Jobs.create_profession(%{name: "Backend", category_name: "Backend"})
 
       {:ok, job} =
         attrs
@@ -182,10 +105,8 @@ defmodule VacancyApi.JobsTest do
     end
 
     test "create_job/1 with valid data creates a job" do
-      {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-
       {:ok, %{id: profession_id}} =
-        Jobs.create_profession(%{name: "Backend", category_id: category_id})
+        Jobs.create_profession(%{name: "Backend", category_name: "Backend"})
 
       assert {:ok, %Job{} = job} =
                Jobs.create_job(Map.put(@valid_attrs, :profession_id, profession_id))
