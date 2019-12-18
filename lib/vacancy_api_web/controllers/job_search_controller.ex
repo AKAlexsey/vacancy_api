@@ -1,8 +1,7 @@
 defmodule VacancyApiWeb.JobSearchController do
   use VacancyApiWeb, :controller
 
-  alias VacancyApi.{Jobs, JobsRegionSearch}
-  alias VacancyApi.Jobs.Job
+  alias VacancyApi.JobsRegionSearch
 
   @permitted_pagination_params ["page", "per_page"]
 

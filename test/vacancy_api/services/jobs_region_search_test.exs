@@ -11,10 +11,8 @@ defmodule VacancyApi.JobsRegionSearchTest do
       {lat_2, lon_2} = {48.804938, 2.120060}
       {lat_3, lon_3} = {48.859284, 2.233996}
 
-      {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-
       {:ok, %{id: profession_id}} =
-        Jobs.create_profession(%{name: "Backend", category_id: category_id})
+        Jobs.create_profession(%{name: "Backend", category_name: "Backend"})
 
       job1 =
         job_fixture(%{

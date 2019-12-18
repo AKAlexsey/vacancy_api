@@ -21,7 +21,6 @@ defmodule VacancyApiWeb.Router do
 
     resources "/jobs", JobController
     resources "/professions", ProfessionController
-    resources "/profession_categories", ProfessionCategoryController
   end
 
   scope "/api", VacancyApiWeb do

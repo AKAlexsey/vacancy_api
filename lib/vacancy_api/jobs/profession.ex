@@ -2,15 +2,15 @@ defmodule VacancyApi.Jobs.Profession do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias VacancyApi.Jobs.{Job, ProfessionCategory}
+  alias VacancyApi.Jobs.Job
 
-  @cast_fields [:name, :category_id]
-  @required_fields [:name, :category_id]
+  @cast_fields [:name, :category_name]
+  @required_fields [:name, :category_name]
 
   schema "professions" do
     field :name, :string
+    field :category_name, :string
 
-    belongs_to :category, ProfessionCategory
     has_many :jobs, Job
 
     timestamps()

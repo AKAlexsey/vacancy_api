@@ -98,10 +98,8 @@ defmodule VacancyApiWeb.JobControllerTest do
   end
 
   defp create_profession(_) do
-    {:ok, %{id: category_id}} = Jobs.create_profession_category(%{name: "Backend"})
-
     {:ok, %{id: profession_id}} =
-      Jobs.create_profession(%{name: "Backend", category_id: category_id})
+      Jobs.create_profession(%{name: "Backend", category_name: "Backend"})
 
     {:ok, profession_id: profession_id}
   end
